@@ -41,3 +41,18 @@ BattlePipeline for games
 
 
 <p align="right">(<a href="#top">back to top</a>)</p>
+
+
+<!-- ACKNOWLEDGMENTS -->
+## 参考
+* [如何实现一个灵活、通用的战斗（技能）系统](https://zhuanlan.zhihu.com/p/272216809)
+* [如何设计一个易扩展的游戏技能系统？](https://www.zhihu.com/question/29545727/answer/789247986)
+* [一个MMORPG的常规技能系统](https://zhuanlan.zhihu.com/p/26077188)
+* [MMORPG技能管线设计经验总结](https://zhuanlan.zhihu.com/p/551229626)
+* [如何实现一个强大的MMO技能系统](https://zhuanlan.zhihu.com/p/147681650)
+* [MMORPG技能管线设计经验总结](https://zhuanlan.zhihu.com/p/551229626)
+* [Buff机制及其实际运用](https://bbs.gameres.com/forum.php?mod=viewthread&tid=215027)
+* [AOE机制的DSL及其实际运用](https://bbs.gameres.com/forum.php?mod=viewthread&tid=225054)
+* [不要用海量表项压垮“技能流程”](https://bbs.gameres.com/forum.php?mod=viewthread&tid=229210)
+
+<p align="right">(<a href="#top">back to top</a>)</p>
