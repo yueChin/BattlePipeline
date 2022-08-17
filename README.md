@@ -22,16 +22,22 @@ BattlePipeline for games
 -->
 
 
-
-
 <!-- ABOUT THE PROJECT -->
 ## 简单概述
 * 这是一个战斗管线，主要处理伤害顺序，结算流程和相关的模块依赖。
 * 其实一直想对以前用过，能用但是臃肿的战斗流程进行全面翻新，但是那个系统修修补补好多次，其实也没那么不堪，所以一直没往前推进（其实是懒狗）。
-* 新的战斗管线会仿照URP管线处理feature的方式，支持随意插入和修改新的战斗功能以及流程。
 * 目前在筹备阶段，本库当前的主要任务是记录游戏中碰到的各类需求。（别急，你别急）
 
 <p align="right">(<a href="#top">back to top</a>)</p>
+
+
+
+<!-- ABOUT THE PROJECT -->
+## 目标
+1. 新的战斗管线会仿照URP管线处理feature的方式，支持随意插入和修改新的战斗功能以及流程。
+
+<p align="right">(<a href="#top">back to top</a>)</p>
+
 
 <!-- ABOUT THE PROJECT -->
 ## 需求记录
@@ -45,6 +51,7 @@ BattlePipeline for games
 <!-- ACKNOWLEDGMENTS -->
 ## 注意
  目前引用的插件有：
+
 * Animacer
 * Dotween Pro
 * Odin 
