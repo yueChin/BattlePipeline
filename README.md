@@ -38,7 +38,16 @@ BattlePipeline for games
 * 塞恩的护盾会在装备给与的护盾之后进行进行伤害。
 * 老版大改后的剑魔复活会在时光老头的大之后消耗，然后会是复活甲，最后才是本体，再后面才会是掘墓或者铁男。
 * 铁男和掘墓同时给大，会产生两个尸体。
+<p align="right">(<a href="#top">back to top</a>)</p>
 
+
+
+<!-- ACKNOWLEDGMENTS -->
+## 注意
+ 目前引用的插件有：
+* Animacer
+* Dotween Pro
+* Odin 
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
@@ -54,5 +63,7 @@ BattlePipeline for games
 * [Buff机制及其实际运用](https://bbs.gameres.com/forum.php?mod=viewthread&tid=215027)
 * [AOE机制的DSL及其实际运用](https://bbs.gameres.com/forum.php?mod=viewthread&tid=225054)
 * [不要用海量表项压垮“技能流程”](https://bbs.gameres.com/forum.php?mod=viewthread&tid=229210)
+* [AbilitySystem](https://github.com/weichx/AbilitySystem)
+* [EGamePlay](https://github.com/m969/EGamePlay)
 
 <p align="right">(<a href="#top">back to top</a>)</p>
