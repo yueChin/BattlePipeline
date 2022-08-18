@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Pipeline.Components;
 
 namespace Pipeline.Systems
 {
     
-    public abstract class System
+    public abstract class BPSystem
     {
         private bool m_IsEnable = false;
         private bool m_NeedDisable = false;
@@ -25,5 +26,6 @@ namespace Pipeline.Systems
         }
         
         public abstract void Tick();
+        public abstract Type Type();
     }
 }

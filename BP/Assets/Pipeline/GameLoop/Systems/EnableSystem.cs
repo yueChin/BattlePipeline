@@ -3,14 +3,14 @@ using Unity.VisualScripting;
 
 namespace Pipeline.Systems
 {
-    public class EnableSystem<T> : System
+    public class EnableSystem<T> : BPSystem
     {
         public override void Tick()
         {
             
         }
 
-        public Type Type()
+        public override Type Type()
         {
             return typeof(T);
         }
