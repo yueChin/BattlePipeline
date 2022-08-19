@@ -47,9 +47,19 @@
         void Run();
     }
 
+    public interface IEcsFixedEnableSystem : IEcsSystem
+    {
+        
+    }
+    
     public interface IEcsFixedRunSystem : IEcsSystem
     {
         void FixedRun();
+    }
+    
+    public interface IEcsFixedDisableSystem : IEcsSystem
+    {
+        
     }
     
 #if DEBUG

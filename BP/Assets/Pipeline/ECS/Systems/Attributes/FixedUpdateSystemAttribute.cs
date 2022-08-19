@@ -5,7 +5,7 @@ namespace ECS
     /// <summary>
     /// Marks field of IEcsSystem class to be ignored during dependency injection.
     /// </summary>
-    public sealed class ObjectSystemAttribute : BaseAttribute
+    public sealed class FixedUpdateSystemAttribute : BaseAttribute
     {
     }
 }
