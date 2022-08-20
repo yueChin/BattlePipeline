@@ -5,6 +5,7 @@
     /// </summary>
     public interface IEcsSystem
     {
+        public int SystemPriority();
     }
 
     /// <summary>
@@ -22,15 +23,7 @@
     {
         void Start();
     }
-
-    /// <summary>
-    /// Interface for PostDestroy systems. PostDestroy() will be called after Destroy().
-    /// </summary>
-    public interface IEcsPostDestroySystem : IEcsSystem
-    {
-        void PostDestroy();
-    }
-
+    
     /// <summary>
     /// Interface for Destroy systems. Destroy() will be called last in system lifetime cycle.
     /// </summary>
@@ -40,26 +33,20 @@
     }
 
     /// <summary>
+    /// Interface for PostDestroy systems. PostDestroy() will be called after Destroy().
+    /// </summary>
+    public interface IEcsPostDestroySystem : IEcsSystem
+    {
+        void PostDestroy();
+    }
+
+    
+    /// <summary>
     /// Interface for Run systems.
     /// </summary>
     public interface IEcsRunSystem : IEcsSystem
     {
         void Run();
-    }
-
-    public interface IEcsFixedEnableSystem : IEcsSystem
-    {
-        
-    }
-    
-    public interface IEcsFixedRunSystem : IEcsSystem
-    {
-        void FixedRun();
-    }
-    
-    public interface IEcsFixedDisableSystem : IEcsSystem
-    {
-        
     }
     
 #if DEBUG
@@ -68,7 +55,7 @@
     /// </summary>
     public interface IEcsSystemsDebugListener
     {
-        void OnSystemsDestroyed(EcsSystems systems);
+        void OnSystemsDestroyed(EcsWorldSystems systems);
     }
 #endif
 }

@@ -11,12 +11,16 @@ namespace ECS
     [Unity.IL2CPP.CompilerServices.Il2CppSetOption (Unity.IL2CPP.CompilerServices.Option.NullChecks, false)]
     [Unity.IL2CPP.CompilerServices.Il2CppSetOption (Unity.IL2CPP.CompilerServices.Option.ArrayBoundsChecks, false)]
 #endif
-    public sealed class EcsSystems : IEcsStartSystem, IEcsDestroySystem, IEcsRunSystem
+    public sealed class EcsWorldSystems : IEcsStartSystem, IEcsDestroySystem, IEcsRunSystem
     {
         public readonly string Name;
         public readonly EcsWorld World;
-        private readonly EcsGrowList<IEcsSystem> m_AllSystemGrowList = new EcsGrowList<IEcsSystem>(64);
-        private readonly EcsGrowList<EcsSystemsRunItem> m_RunSystemGrowList = new EcsGrowList<EcsSystemsRunItem>(64);
+        private readonly EcsGrowList<IEcsAwakeSystem> m_AwakeSystemGrowList = new EcsGrowList<IEcsAwakeSystem>(64);
+        private readonly EcsGrowList<IEcsStartSystem> m_StartSystemGrowList = new EcsGrowList<IEcsStartSystem>(64);
+        private readonly EcsGrowList<IEcsDestroySystem> m_DestroySystemGrowList = new EcsGrowList<IEcsDestroySystem>(64);
+        private readonly EcsGrowList<IEcsPostDestroySystem> m_PostDestroySystemGrowList = new EcsGrowList<IEcsPostDestroySystem>(64);
+        private readonly EcsGrowList<IEcsRunSystem> m_RunSystemGrowList = new EcsGrowList<IEcsRunSystem>(64);
+        
         private readonly Dictionary<int, int> m_NamedRunSystemDict = new Dictionary<int, int>(64);
         private readonly Dictionary<Type, object> m_InjectionDict = new Dictionary<Type, object>(32);
         private bool m_Injected;
@@ -59,7 +63,7 @@ namespace ECS
         /// </summary>
         /// <param name="world">EcsWorld instance.</param>
         /// <param name="name">Custom name for this group.</param>
-        public EcsSystems(EcsWorld world, string name = null)
+        public EcsWorldSystems(EcsWorld world, string name = null)
         {
             World = world;
             Name = name;
@@ -70,7 +74,7 @@ namespace ECS
         /// </summary>
         /// <param name="system">System instance.</param>
         /// <param name="namedRunSystem">Optional name of system.</param>
-        public EcsSystems Add(IEcsSystem system, string namedRunSystem = null)
+        public EcsWorldSystems Add(IEcsSystem system, string namedRunSystem = null)
         {
 #if DEBUG
             if (system == null)
@@ -93,26 +97,40 @@ namespace ECS
                 throw new Exception("Cant name non-IEcsRunSystem.");
             }
 #endif
-            m_AllSystemGrowList.Add(system);
-            if (system is IEcsRunSystem)
+            switch (system)
             {
-                if (namedRunSystem == null && system is EcsSystems ecsSystems)
+                case IEcsAwakeSystem ecsAwakeSystem :
+                    m_AwakeSystemGrowList.Add(ecsAwakeSystem);
+                    break;
+                case IEcsStartSystem ecsStartSystem:
+                    m_StartSystemGrowList.Add(ecsStartSystem);
+                    break;
+                case IEcsRunSystem runSystem:
                 {
-                    namedRunSystem = ecsSystems.Name;
-                }
-
-                if (namedRunSystem != null)
-                {
-#if DEBUG
-                    if (m_NamedRunSystemDict.ContainsKey(namedRunSystem.GetHashCode()))
+                    if (namedRunSystem == null && runSystem is EcsWorldSystems ecsSystems)
                     {
-                        throw new Exception($"Cant add named system - \"{namedRunSystem}\" name already exists.");
+                        namedRunSystem = ecsSystems.Name;
                     }
-#endif
-                    m_NamedRunSystemDict[namedRunSystem.GetHashCode()] = m_RunSystemGrowList.Count;
-                }
 
-                m_RunSystemGrowList.Add(new EcsSystemsRunItem { Active = true, System = (IEcsRunSystem)system });
+                    if (namedRunSystem != null)
+                    {
+#if DEBUG
+                        if (m_NamedRunSystemDict.ContainsKey(namedRunSystem.GetHashCode()))
+                        {
+                            throw new Exception($"Cant add named system - \"{namedRunSystem}\" name already exists.");
+                        }
+#endif
+                        m_NamedRunSystemDict[namedRunSystem.GetHashCode()] = m_RunSystemGrowList.Count;
+                    }
+                    m_RunSystemGrowList.Add(runSystem);
+                    break;
+                }
+                case IEcsDestroySystem ecsDestroySystem:
+                    m_DestroySystemGrowList.Add(ecsDestroySystem);
+                    break;
+                case IEcsPostDestroySystem ecsPostDestroySystem:
+                    m_PostDestroySystemGrowList.Add(ecsPostDestroySystem);
+                    break;
             }
 
             return this;
@@ -124,48 +142,9 @@ namespace ECS
         }
 
         /// <summary>
-        /// Sets IEcsRunSystem active state.
-        /// </summary>
-        /// <param name="idx">Index of system.</param>
-        /// <param name="state">New state of system.</param>
-        public void SetRunSystemState(int idx, bool state)
-        {
-#if DEBUG
-            if (idx < 0 || idx >= m_RunSystemGrowList.Count)
-            {
-                throw new Exception("Invalid index");
-            }
-#endif
-            m_RunSystemGrowList.Items[idx].Active = state;
-        }
-
-        /// <summary>
-        /// Gets IEcsRunSystem active state.
-        /// </summary>
-        /// <param name="idx">Index of system.</param>
-        public bool GetRunSystemState(int idx)
-        {
-#if DEBUG
-            if (idx < 0 || idx >= m_RunSystemGrowList.Count)
-            {
-                throw new Exception("Invalid index");
-            }
-#endif
-            return m_RunSystemGrowList.Items[idx].Active;
-        }
-
-        /// <summary>
-        /// Get all systems. Important: Don't change collection!
-        /// </summary>
-        public EcsGrowList<IEcsSystem> GetAllSystems()
-        {
-            return m_AllSystemGrowList;
-        }
-
-        /// <summary>
         /// Gets all run systems. Important: Don't change collection!
         /// </summary>
-        public EcsGrowList<EcsSystemsRunItem> GetRunSystems()
+        public EcsGrowList<IEcsRunSystem> GetRunSystems()
         {
             return m_RunSystemGrowList;
         }
@@ -175,7 +154,7 @@ namespace ECS
         /// </summary>
         /// <param name="obj">Instance.</param>
         /// <param name="overridenType">Overriden type, if null - typeof(obj) will be used.</param>
-        public EcsSystems Inject(object obj, Type overridenType = null)
+        public EcsWorldSystems Inject(object obj, Type overridenType = null)
         {
 #if DEBUG
             if (m_Initialized)
@@ -206,7 +185,7 @@ namespace ECS
         /// Processes injections immediately.
         /// Can be used to DI before Init() call.
         /// </summary>
-        public EcsSystems ProcessInjects()
+        public EcsWorldSystems ProcessInjects()
         {
 #if DEBUG
             if (m_Initialized)
@@ -219,36 +198,28 @@ namespace ECS
                 throw new Exception("Cant touch after destroy.");
             }
 #endif
-            if (!m_Injected)
-            {
-                m_Injected = true;
-                for (int i = 0, iMax = m_AllSystemGrowList.Count; i < iMax; i++)
-                {
-                    if (m_AllSystemGrowList.Items[i] is EcsSystems nestedSystems)
-                    {
-                        foreach (KeyValuePair<Type, object> pair in m_InjectionDict)
-                        {
-                            nestedSystems.m_InjectionDict[pair.Key] = pair.Value;
-                        }
-
-                        nestedSystems.ProcessInjects();
-                    }
-                    else
-                    {
-                        m_AllSystemGrowList.Items[i].InjectDataToSystem( World, m_InjectionDict);
-                    }
-                }
-            }
+            // if (!m_Injected)
+            // {
+            //     m_Injected = true;
+            //     for (int i = 0, iMax = m_AllSystemGrowList.Count; i < iMax; i++)
+            //     {
+            //         if (m_AllSystemGrowList[i] is EcsWorldSystems nestedSystems)
+            //         {
+            //             foreach (KeyValuePair<Type, object> pair in m_InjectionDict)
+            //             {
+            //                 nestedSystems.m_InjectionDict[pair.Key] = pair.Value;
+            //             }
+            //
+            //             nestedSystems.ProcessInjects();
+            //         }
+            //         else
+            //         {
+            //             m_AllSystemGrowList[i].InjectDataToSystem( World, m_InjectionDict);
+            //         }
+            //     }
+            // }
 
             return this;
-        }
-
-        /// <summary>
-        /// Registers component type as one-frame for auto-removing at this point in execution sequence.
-        /// </summary>
-        public EcsSystems OneFrame<T>() where T : struct
-        {
-            return Add(new RemoveOneFrame<T>());
         }
 
         /// <summary>
@@ -269,9 +240,9 @@ namespace ECS
 #endif
             ProcessInjects();
             // IEcsPreInitSystem processing.
-            for (int i = 0, iMax = m_AllSystemGrowList.Count; i < iMax; i++)
+            for (int i = 0, iMax = m_AwakeSystemGrowList.Count; i < iMax; i++)
             {
-                IEcsSystem system = m_AllSystemGrowList.Items[i];
+                IEcsSystem system = m_AwakeSystemGrowList[i];
                 if (system is IEcsAwakeSystem awakeSystem)
                 {
                     awakeSystem.Awake();
@@ -282,9 +253,9 @@ namespace ECS
             }
 
             // IEcsInitSystem processing.
-            for (int i = 0, iMax = m_AllSystemGrowList.Count; i < iMax; i++)
+            for (int i = 0, iMax = m_StartSystemGrowList.Count; i < iMax; i++)
             {
-                IEcsSystem system = m_AllSystemGrowList.Items[i];
+                IEcsSystem system = m_StartSystemGrowList[i];
                 if (system is IEcsStartSystem initSystem)
                 {
                     initSystem.Start();
@@ -316,11 +287,8 @@ namespace ECS
 #endif
             for (int i = 0, iMax = m_RunSystemGrowList.Count; i < iMax; i++)
             {
-                EcsSystemsRunItem runItem = m_RunSystemGrowList.Items[i];
-                if (runItem.Active)
-                {
-                    runItem.System.Run();
-                }
+                IEcsRunSystem runItem = m_RunSystemGrowList.Items[i];
+                runItem.Run();
 #if DEBUG
                 if (World.CheckForLeakedEntities(null))
                 {
@@ -344,9 +312,9 @@ namespace ECS
             m_Destroyed = true;
 #endif
             // IEcsDestroySystem processing.
-            for (int i = m_AllSystemGrowList.Count - 1; i >= 0; i--)
+            for (int i = m_DestroySystemGrowList.Count - 1; i >= 0; i--)
             {
-                IEcsSystem system = m_AllSystemGrowList.Items[i];
+                IEcsSystem system = m_DestroySystemGrowList[i];
                 if (system is IEcsDestroySystem destroySystem)
                 {
                     destroySystem.Destroy();
@@ -357,9 +325,9 @@ namespace ECS
             }
 
             // IEcsPostDestroySystem processing.
-            for (int i = m_AllSystemGrowList.Count - 1; i >= 0; i--)
+            for (int i = m_PostDestroySystemGrowList.Count - 1; i >= 0; i--)
             {
-                IEcsSystem system = m_AllSystemGrowList.Items[i];
+                IEcsSystem system = m_PostDestroySystemGrowList.Items[i];
                 if (system is IEcsPostDestroySystem postDestroySystem)
                 {
                     postDestroySystem.PostDestroy();
@@ -376,32 +344,14 @@ namespace ECS
 #endif
         }
 
-
-    }
-
-    /// <summary>
-    /// System for removing OneFrame component.
-    /// </summary>
-    /// <typeparam name="T">OneFrame component type.</typeparam>
-    internal sealed class RemoveOneFrame<T> : IEcsRunSystem where T : struct
-    {
-        private readonly EcsFilter<T> m_OneFrames = null;
-
-        void IEcsRunSystem.Run()
+        public int SystemPriority()
         {
-            for (int idx = m_OneFrames.GetEntitiesCount() - 1; idx >= 0; idx--)
-            {
-                m_OneFrames.GetEntity(idx).Del<T>();
-            }
+            return 0;
         }
-    }
 
-    /// <summary>
-    /// IEcsRunSystem instance with active state.
-    /// </summary>
-    public sealed class EcsSystemsRunItem
-    {
-        public bool Active;
-        public IEcsRunSystem System;
+        public void SortSystem()
+        {
+            
+        }
     }
 }

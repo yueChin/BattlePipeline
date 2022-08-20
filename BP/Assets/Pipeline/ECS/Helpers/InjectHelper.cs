@@ -9,7 +9,7 @@ namespace ECS
         private static readonly HashSet<Type> s_AllType = new HashSet<Type>();
         private static readonly HashSetDict<Type, Type> s_AttributeTypeDict = new HashSetDict<Type,Type>();
         
-        public static void InjectSystemToBaseSystem(this EcsSystems system,bool isFixed = false)
+        public static void InjectSystemToBaseSystem(this EcsWorldSystems system,bool isFixed = false)
         {
             AddAssemblyType("BP");
             s_AttributeTypeDict.Clear();
@@ -28,50 +28,29 @@ namespace ECS
 
             Type objSystem = isFixed ? typeof(FixedUpdateSystemAttribute): typeof(UpdateSystemAttribute);
             HashSet<Type> typeSet = !s_AttributeTypeDict.ContainsKey(objSystem) ? new HashSet<Type>() : s_AttributeTypeDict[objSystem];
-            if (isFixed)
+            foreach (Type type in typeSet)
             {
-                foreach (Type type in typeSet)
+                object obj = Activator.CreateInstance(type);
+                switch (obj)
                 {
-                    object obj = Activator.CreateInstance(type);
-                    switch (obj)
-                    {
-                        case IEcsFixedEnableSystem objectSystem:
-                            system.Add(objectSystem);
-                            break;
-                        case IEcsFixedRunSystem objectSystem:
-                            system.Add(objectSystem);
-                            break;
-                        case IEcsFixedDisableSystem objectSystem:
-                            system.Add(objectSystem);
-                            break;
-                    }
+                    case IEcsAwakeSystem objectSystem:
+                        system.Add(objectSystem);
+                        break;
+                    case IEcsStartSystem objectSystem:
+                        system.Add(objectSystem);
+                        break;
+                    case IEcsRunSystem objectSystem:
+                        system.Add(objectSystem);
+                        break;
+                    case IEcsDestroySystem objectSystem:
+                        system.Add(objectSystem);
+                        break;
+                    case IEcsPostDestroySystem objectSystem:
+                        system.Add(objectSystem);
+                        break;
                 }
             }
-            else
-            {
-                foreach (Type type in typeSet)
-                {
-                    object obj = Activator.CreateInstance(type);
-                    switch (obj)
-                    {
-                        case IEcsAwakeSystem objectSystem:
-                            system.Add(objectSystem);
-                            break;
-                        case IEcsStartSystem objectSystem:
-                            system.Add(objectSystem);
-                            break;
-                        case IEcsRunSystem objectSystem:
-                            system.Add(objectSystem);
-                            break;
-                        case IEcsDestroySystem objectSystem:
-                            system.Add(objectSystem);
-                            break;
-                        case IEcsPostDestroySystem objectSystem:
-                            system.Add(objectSystem);
-                            break;
-                    }
-                }
-            }
+            system.SortSystem();
         }
         
         public static void AddAssemblyType(string dllName)

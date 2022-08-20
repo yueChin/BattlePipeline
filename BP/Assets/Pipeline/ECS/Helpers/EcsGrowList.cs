@@ -12,6 +12,14 @@ namespace ECS
         public T[] Items;
         public int Count;
 
+        public T this[int idx]
+        {
+            get
+            {
+                return Items[idx];
+            }
+        }
+        
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public EcsGrowList(int capacity)
         {
