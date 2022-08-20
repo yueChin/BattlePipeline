@@ -55,6 +55,7 @@ BattlePipeline for games
 * Animacer
 * Dotween Pro
 * Odin 
+* Slate
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
@@ -72,5 +73,6 @@ BattlePipeline for games
 * [不要用海量表项压垮“技能流程”](https://bbs.gameres.com/forum.php?mod=viewthread&tid=229210)
 * [AbilitySystem](https://github.com/weichx/AbilitySystem)
 * [EGamePlay](https://github.com/m969/EGamePlay)
+* [ET](https://github.com/egametang/ET)
 
 <p align="right">(<a href="#top">back to top</a>)</p>
