@@ -71,6 +71,7 @@ BattlePipeline for games
 * [Buff机制及其实际运用](https://bbs.gameres.com/forum.php?mod=viewthread&tid=215027)
 * [AOE机制的DSL及其实际运用](https://bbs.gameres.com/forum.php?mod=viewthread&tid=225054)
 * [不要用海量表项压垮“技能流程”](https://bbs.gameres.com/forum.php?mod=viewthread&tid=229210)
+* [Dreamscaper: Killer Combat on an Indie Budget](https://www.youtube.com/watch?v=3Omb5exWpd4)
 * [AbilitySystem](https://github.com/weichx/AbilitySystem)
 * [EGamePlay](https://github.com/m969/EGamePlay)
 * [ET](https://github.com/egametang/ET)
