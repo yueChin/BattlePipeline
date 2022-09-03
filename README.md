@@ -47,6 +47,12 @@ BattlePipeline for games
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 
+<!-- ABOUT THE PROJECT -->
+## 一些想法
+- 向目标冲刺，向目标点冲刺，冲刺一段时间，冲刺一段距离，冲刺给定的力，写在同一个buff里吗？
+
+<p align="right">(<a href="#top">back to top</a>)</p>
+
 
 <!-- ACKNOWLEDGMENTS -->
 ## 注意
