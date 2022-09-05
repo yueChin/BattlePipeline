@@ -35,7 +35,8 @@ BattlePipeline for games
 <!-- ABOUT THE PROJECT -->
 ## 目标
 1. 新的战斗管线会仿照URP管线处理feature的方式，支持随意插入和修改新的战斗功能以及流程。
-
+2. 完整的编辑器流。
+3. 完整的示例。
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 
@@ -52,7 +53,15 @@ BattlePipeline for games
 ## 一些想法
 - 向目标冲刺，向目标点冲刺，冲刺一段时间，冲刺一段距离，冲刺给定的力，写在同一个buff里吗？
 - 伤害管线流程：技能给伤害，伤害减去减伤，扣血。这时候发起人的技能虚弱，伤害吸血，吸血减疗，治疗增强，减疗衰减，治疗反转，减伤数值累积监听，目标的伤害反伤，反伤吸血，伤害回血这些怎么处理。都在同一帧处理吗？同一帧处理的话，顺序是什么，技能本身的优先级还是在流程中的时间点顺序。下一帧处理的话，如果目标或者自己死亡，会丢伤害吗？有的技能要人活着才有，有的不用，这两点在比如，我的种子技能在吸血，但是对面也有反伤，种子需要我活着也需要对面活着，但是反伤不需要，这时候两者都丝血，是先吸死还是反伤死，还是一起死。
+<p align="right">(<a href="#top">back to top</a>)</p>
 
+
+<!-- ABOUT THE PROJECT -->
+## 思路记录
+- DamageData 需要 第几帧 优先级 
+- System 特别是physic相关的 同时需要update 和fiexedupdate
+- Buff 作为Entity 应该能让持有者记录或者查询到
+- PipelineProfiler 很重要，要写
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 
