@@ -48,6 +48,7 @@ BattlePipeline for games
 * 固伤aoe技能要先判断范围内敌人数量，后面才给伤害。
 * 多个有相同效果的buff，除了类型要支持不同buffid筛选。
 * 记得考虑 自己身上有buff，才会让对面buff产生不同效果的实现。
+* 受击时，命中时，受到伤害时，暴击时，造成伤害时...etc各个事件
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 
