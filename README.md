@@ -50,6 +50,7 @@ BattlePipeline for games
 * 记得考虑 自己身上有buff，才会让对面buff产生不同效果的实现。
 * 受击时，命中时，受到伤害时，暴击时，造成伤害时...etc各个事件
 * 注意毒伤之类的buff伤害并不会触发破魔盾
+* 事件监听 要能定制订阅顺序
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 
